@@ -52,62 +52,52 @@ document.addEventListener('DOMContentLoaded', () => {
   enemy3Image.src = 'enemy3.png';
 
 
-// Keyboard event listeners (for desktop)
-document.addEventListener('keydown', handleKeyDown);
-document.addEventListener('keyup', handleKeyUp);
+  document.addEventListener('keydown', (e) => {
+    if (e.code === 'ArrowUp') {
+      player.y -= player.speed;
+    } else if (e.code === 'ArrowDown') {
+      player.y += player.speed;
+    } else if (e.code === 'ArrowLeft') {
+      player.x -= player.speed;
+    } else if (e.code === 'ArrowRight') {
+      player.x += player.speed;
+    }
+  
+      // Keep the hero within the canvas borders
+    player.x = Math.min(Math.max(player.x, player.size / 2), canvas.width - player.size / 2);
+    player.y = Math.min(Math.max(player.y, player.size / 2), canvas.height - player.size / 2);
+  });
 
-// Touch event listeners (for mobile)
-canvas.addEventListener('touchstart', handleTouchStart);
-canvas.addEventListener('touchmove', handleTouchMove);
-canvas.addEventListener('touchend', handleTouchEnd);
+  // Button event listeners
+  document.getElementById('upButton').addEventListener('click', handleUpButton);
+  document.getElementById('downButton').addEventListener('click', handleDownButton);
+  document.getElementById('leftButton').addEventListener('click', handleLeftButton);
+  document.getElementById('rightButton').addEventListener('click', handleRightButton);
 
-function handleKeyDown(e) {
-  if (e.code === 'ArrowUp') {
+
+  function handleUpButton() {
     player.y -= player.speed;
-  } else if (e.code === 'ArrowDown') {
-    player.y += player.speed;
-  } else if (e.code === 'ArrowLeft') {
-    player.x -= player.speed;
-  } else if (e.code === 'ArrowRight') {
-    player.x += player.speed;
+    // Keep the hero within the canvas borders
+    player.y = Math.max(player.y, player.size / 2);
   }
-
-  // Keep the hero within the canvas borders
-  player.x = Math.min(Math.max(player.x, player.size / 2), canvas.width - player.size / 2);
-  player.y = Math.min(Math.max(player.y, player.size / 2), canvas.height - player.size / 2);
-}
-
-function handleKeyUp(e) {
-  // Handle keyboard key up events (if needed)
-}
-
-let touchStartX = 0;
-let touchStartY = 0;
-
-function handleTouchStart(event) {
-  touchStartX = event.touches[0].clientX;
-  touchStartY = event.touches[0].clientY;
-}
-
-function handleTouchMove(event) {
-  event.preventDefault(); // Prevent scrolling
-  const touchX = event.touches[0].clientX;
-  const touchY = event.touches[0].clientY;
-
-  const dx = touchX - touchStartX;
-  const dy = touchY - touchStartY;
-
-  player.x += dx;
-  player.y += dy;
-
-  touchStartX = touchX;
-  touchStartY = touchY;
-}
-
-function handleTouchEnd() {
-  // Perform any necessary actions when touch ends (if needed)
-}
-
+  
+  function handleDownButton() {
+    player.y += player.speed;
+    // Keep the hero within the canvas borders
+    player.y = Math.min(player.y, canvas.height - player.size / 2);
+  }
+  
+  function handleLeftButton() {
+    player.x -= player.speed;
+    // Keep the hero within the canvas borders
+    player.x = Math.max(player.x, player.size / 2);
+  }
+  
+  function handleRightButton() {
+    player.x += player.speed;
+    // Keep the hero within the canvas borders
+    player.x = Math.min(player.x, canvas.width - player.size / 2);
+  }
 
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -331,7 +321,7 @@ function countdown() {
         ctx.font = '48px serif';
         ctx.fillStyle = 'green';
         ctx.textAlign = 'center';
-        ctx.fillText('כל הכבוד! ניצחת!', canvas.width / 2, canvas.height / 2);
+        ctx.fillText('כל הכבוד!', canvas.width / 2, canvas.height / 2);
         isGameOver = true; // Set isGameOver to true to stop the current game loop
         return; // Exit the function to stop further game loop iterations
       } else if (enemies.length === 0) {
