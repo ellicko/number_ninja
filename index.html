@@ -3,32 +3,52 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Math Game</title>
+  <title>Number Ninja!</title>
   <style>
-    canvas {
-      border: 2px solid black;
-      display: block;
-      margin: 0 auto;
-    }
+#gameContainer {
+  position: relative;
+  text-align: center;
+}
 
-    /* Media query for screens with a maximum width of 600px */
-    @media only screen and (max-width: 600px) {
-      canvas {
-        width: 100%;
-        height: auto;
-      }
-    }
+canvas {
+  border: 2px solid black;
+  display: inline-block;
+  margin: 0 auto;
+}
+
+/* Media query for screens with a maximum width of 600px */
+@media only screen and (max-width: 600px) {
+  canvas {
+    width: 100%;
+    height: auto;
+  }
+}
+
+.arrowButtons {
+  display: flex;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+h1 {
+  text-align: center;
+}
+
   </style>
 </head>
 <body>
-  <h1>Math Game</h1>
-  <canvas id="gameCanvas"></canvas>
+  <h1>Number Ninja</h1>
+  <div id="gameContainer">
+    <canvas id="gameCanvas"></canvas>
 
-  <!-- Arrow key buttons -->
-  <button id="upButton">Up</button>
-  <button id="downButton">Down</button>
-  <button id="leftButton">Left</button>
-  <button id="rightButton">Right</button>
+    <!-- Arrow key buttons -->
+    <div class="arrowButtons">
+      <button id="upButton">Up</button>
+      <button id="downButton">Down</button>
+      <button id="leftButton">Left</button>
+      <button id="rightButton">Right</button>
+    </div>
+  </div>
 
   <script src="numberninja.js"></script>
 </body>
