@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
     x: canvas.width / 2,
     y: canvas.height / 2,
     size: 50,
-    speed: 5,
+    speed: 7,
   };
 
   const hero = new Image();
@@ -48,22 +48,66 @@ document.addEventListener('DOMContentLoaded', () => {
   const enemy2Image = new Image();
   enemy2Image.src = 'enemy2.png';
 
+  const enemy3Image = new Image();
+  enemy3Image.src = 'enemy3.png';
 
-  document.addEventListener('keydown', (e) => {
-    if (e.code === 'ArrowUp') {
-      player.y -= player.speed;
-    } else if (e.code === 'ArrowDown') {
-      player.y += player.speed;
-    } else if (e.code === 'ArrowLeft') {
-      player.x -= player.speed;
-    } else if (e.code === 'ArrowRight') {
-      player.x += player.speed;
-    }
 
-    // Keep the hero within the canvas borders
-    player.x = Math.min(Math.max(player.x, player.size / 2), canvas.width - player.size / 2);
-    player.y = Math.min(Math.max(player.y, player.size / 2), canvas.height - player.size / 2);
-  });
+// Keyboard event listeners (for desktop)
+document.addEventListener('keydown', handleKeyDown);
+document.addEventListener('keyup', handleKeyUp);
+
+// Touch event listeners (for mobile)
+canvas.addEventListener('touchstart', handleTouchStart);
+canvas.addEventListener('touchmove', handleTouchMove);
+canvas.addEventListener('touchend', handleTouchEnd);
+
+function handleKeyDown(e) {
+  if (e.code === 'ArrowUp') {
+    player.y -= player.speed;
+  } else if (e.code === 'ArrowDown') {
+    player.y += player.speed;
+  } else if (e.code === 'ArrowLeft') {
+    player.x -= player.speed;
+  } else if (e.code === 'ArrowRight') {
+    player.x += player.speed;
+  }
+
+  // Keep the hero within the canvas borders
+  player.x = Math.min(Math.max(player.x, player.size / 2), canvas.width - player.size / 2);
+  player.y = Math.min(Math.max(player.y, player.size / 2), canvas.height - player.size / 2);
+}
+
+function handleKeyUp(e) {
+  // Handle keyboard key up events (if needed)
+}
+
+let touchStartX = 0;
+let touchStartY = 0;
+
+function handleTouchStart(event) {
+  touchStartX = event.touches[0].clientX;
+  touchStartY = event.touches[0].clientY;
+}
+
+function handleTouchMove(event) {
+  event.preventDefault(); // Prevent scrolling
+  const touchX = event.touches[0].clientX;
+  const touchY = event.touches[0].clientY;
+
+  const dx = touchX - touchStartX;
+  const dy = touchY - touchStartY;
+
+  player.x += dx;
+  player.y += dy;
+
+  touchStartX = touchX;
+  touchStartY = touchY;
+}
+
+function handleTouchEnd() {
+  // Perform any necessary actions when touch ends (if needed)
+}
+
 
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -87,6 +131,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.drawImage(enemyImage, enemy.x - enemy.size / 2, enemy.y - enemy.size / 2, enemy.size, enemy.size);
       } else if (level === 2) {
         ctx.drawImage(enemy2Image, enemy.x - enemy.size / 2, enemy.y - enemy.size / 2, enemy.size, enemy.size);
+      } else if (level === 3) {
+        ctx.drawImage(enemy3Image, enemy.x - enemy.size / 2, enemy.y - enemy.size / 2, enemy.size, enemy.size);
       }
     });
   
@@ -95,6 +141,14 @@ document.addEventListener('DOMContentLoaded', () => {
       ctx.fillStyle = 'green';
       ctx.fillText('Congratulations! Next Level', canvas.width / 2 - 100, canvas.height / 2);
     }
+      // Check for victory condition
+  if (level === 3 && enemies.length === 0) {
+    ctx.font = '48px serif';
+    ctx.fillStyle = 'green';
+    ctx.textAlign = 'center';
+    ctx.fillText('Congratulations! You Win!', canvas.width / 2, canvas.height / 2);
+    return; // Exit the function to stop further drawing
+  }
   }
   
 
@@ -240,6 +294,18 @@ function countdown() {
           direction: Math.random() * Math.PI * 2,
         });
       }
+    } else if (level === 3) {
+      timeRemaining = 60;
+      enemies.length = 0;
+      for (let i = 0; i < 7; i++) {
+        enemies.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          size: 30,
+          speed: 4, // Increased enemy speed
+          direction: Math.random() * Math.PI * 2,
+        });
+      }
     }
   }
   
@@ -261,13 +327,21 @@ function countdown() {
       update();
   
       // Check if the current level is completed
-      if (enemies.length === 0) {
+      if (level === 3 && enemies.length === 0) {
+        ctx.font = '48px serif';
+        ctx.fillStyle = 'green';
+        ctx.textAlign = 'center';
+        ctx.fillText('כל הכבוד! ניצחת!', canvas.width / 2, canvas.height / 2);
+        isGameOver = true; // Set isGameOver to true to stop the current game loop
+        return; // Exit the function to stop further game loop iterations
+      } else if (enemies.length === 0) {
         level++; // Increment the level
         isGameOver = true; // Set isGameOver to true to stop the current game loop
         startGame(); // Start the next level
-      } else {
-        requestAnimationFrame(gameLoop);
+        return; // Exit the function to stop further game loop iterations
       }
+  
+      requestAnimationFrame(gameLoop);
     }
   }
 
